@@ -1,0 +1,12 @@
+com\api\model\SensorReading.class
+com\api\resource\SensorReadingResource.class
+com\api\model\Sensor.class
+com\api\service\SensorReadingService.class
+com\api\resource\DiscoveryResource.class
+com\api\service\RoomService.class
+com\api\resource\SensorResource.class
+com\api\service\SensorService.class
+com\api\config\Main.class
+com\api\config\AppConfig.class
+com\api\resource\RoomResource.class
+com\api\model\Room.class
