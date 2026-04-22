@@ -7,6 +7,7 @@ package com.api.resource;
 import com.api.model.Sensor;
 import com.api.service.SensorService;
 import com.api.service.RoomService;
+import com.api.exception.LinkedResourceNotFoundException;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.GET;
@@ -18,7 +19,6 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.WebApplicationException;
 import java.util.Collection;
 
 /**
@@ -64,7 +64,7 @@ public class SensorResource {
     public Sensor addSensor(Sensor sensor){
         //room validation
         if(RoomService.getRoom(sensor.getRoomId()) == null){
-            throw new WebApplicationException("Room not found", 400);
+            throw new LinkedResourceNotFoundException("Room does not exist.");
         }
         return SensorService.addSensor(sensor);
     }

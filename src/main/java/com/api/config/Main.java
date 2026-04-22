@@ -24,7 +24,8 @@ public class Main {
                 .packages("com.api")
                 .register(com.api.resource.DiscoveryResource.class)
                 .register(com.api.resource.RoomResource.class)
-                .register(com.api.resource.SensorResource.class);
+                .register(com.api.resource.SensorResource.class)
+                .register(com.api.filter.LoggingFilter.class);
         return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
     }
     

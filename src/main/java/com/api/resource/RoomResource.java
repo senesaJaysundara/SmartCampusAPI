@@ -6,6 +6,7 @@ package com.api.resource;
 
 import com.api.model.Room;
 import com.api.service.RoomService;
+import com.api.exception.RoomNotEmptyException;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.GET;
@@ -75,6 +76,13 @@ public class RoomResource {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Room deleteRoom(@PathParam("id") int id){
+        
+        boolean hasSensor = com.api.service.SensorService.getAllSensors()
+                .stream()
+                .anyMatch(sensor -> sensor.getRoomId() == id);
+        if (hasSensor){
+            throw new RoomNotEmptyException("Room cannot be deleted, sensors are still assigned.");
+        }
         return RoomService.deleteRoom(id);
     }
 }

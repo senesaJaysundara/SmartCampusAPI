@@ -18,8 +18,8 @@ public class SensorService {
     private static Map<Integer, Sensor> sensors = new HashMap<>();
     
     static{
-        sensors.put(1, new Sensor(1, "Temperature", 2.5, 1));
-        sensors.put(2, new Sensor(2, "C02", 400, 1));
+        sensors.put(1, new Sensor(1, "Temperature", 2.5, 1, "ACTIVE"));
+        sensors.put(2, new Sensor(2, "CO2", 400, 1, "ACTIVE"));
     }
     
     public static Collection<Sensor> getAllSensors(){

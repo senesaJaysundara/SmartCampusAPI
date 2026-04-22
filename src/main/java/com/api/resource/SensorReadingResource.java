@@ -4,9 +4,11 @@
  */
 package com.api.resource;
 
+import com.api.model.Sensor;
 import com.api.model.SensorReading;
 import com.api.service.SensorReadingService;
 import com.api.service.SensorService;
+import com.api.exception.SensorUnavailableException;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -39,12 +41,19 @@ public class SensorReadingResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public SensorReading addReading(SensorReading reading){
-        
         //Add reading
+        //SensorReadingService.addReading(sensorId, reading);
+        
+        Sensor sensor = SensorService.getSensor(sensorId);
+        
+        if(sensor.getStatus().equals("MAINTENANCE")){
+            throw new SensorUnavailableException("Sensor id under maintenance.");
+        }
+        
+        //Save reading
         SensorReadingService.addReading(sensorId, reading);
         
         //update parent sensor value
-        com.api.model.Sensor sensor = SensorService.getSensor(sensorId);
         if (sensor != null){
             sensor.setValue(reading.getValue());
         }
