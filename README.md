@@ -77,32 +77,55 @@ manage.
 
 ---
 
+## Deployment Notes
+
+This application is deployed as a WAR file on Apache Tomcat 9
+
+## Application Base URL:
+```
+http://localhost:8080/SmartCampusAPI-1.0-SNAPSHOT/
+```
+## API Base Path:
+```
+http://localhost:8080/SmartCampusAPI-1.0-SNAPSHOT/api/v1 
+```
+---
+
 ##  How to Run the Project
 
 1. Clone the repository:
 
 ```
-git clone https://github.com/YOUR_USERNAME/SmartCampusAPI.git
+git clone https://github.com/senesaJaysundara/SmartCampusAPI.git
 ```
 
 2. Open the project in NetBeans (or any IDE)
 
-3. Build the project:
+3. Build the project
 
 ```
 Right click → Clean and Build
 ```
-
+4. Deploy the tomcat
+* Copy the generated .war file from
+  ```
+  target/SmartCampuAPI-1.0-SNAPSHOT.war
+  ```
+* Paste into:
+  ```
+  apache-tomcat/webapps/
+  ```
 4. Run the project:
 
 ```
-Run Main.java
+Right click project → Run
+Tomcat server will start and deploy the application
 ```
 
 5. Server will start at:
 
 ```
-http://localhost:8080/api/v1
+http://localhost:8080/SmartCampusAPI-1.0-SNAPSHOT/api/v1
 ```
 
 ---
@@ -111,7 +134,7 @@ http://localhost:8080/api/v1
 
 ### Discovery
 
-* GET /api/v1
+* GET http://localhost:8080/SmartCampusAPI-1.0-SNAPSHOT/api/v1
 
 ---
 
@@ -146,61 +169,77 @@ http://localhost:8080/api/v1
 ### 1. Get API Discovery
 
 ```
-curl http://localhost:8080/api/v1
+curl http://localhost:8080/SmartCampusAPI-1.0-SNAPSHOT/api/v1
 ```
 
 ### 2. Get All Rooms
 
 ```
-curl http://localhost:8080/api/v1/rooms
+curl http://localhost:8080/SmartCampusAPI-1.0-SNAPSHOT/api/v1/rooms
 ```
 
 ### 3. Create a New Room
 
 ```
-curl -X POST http://localhost:8080/api/v1/rooms \
+curl -X POST http://localhost:8080/SmartCampusAPI-1.0-SNAPSHOT/api/v1/rooms\
 -H "Content-Type: application/json" \
--d "{\"id\":1,\"name\":\"Room A\"}"
+-d "{\"id\":\"CS-205\",\"name\":\"Computer Science Lab\",\"capacity\":40}"
 ```
 
 ### 4. Get Room by ID
 
 ```
-curl http://localhost:8080/api/v1/rooms/1
+curl http://localhost:8080/SmartCampusAPI-1.0-SNAPSHOT/api/v1/rooms/CS-205
 ```
 
 ### 5. Create a New Sensor
 
 ```
-curl -X POST http://localhost:8080/api/v1/sensors \
+curl -X POST http://localhost:8080/SmartCampusAPI-1.0-SNAPSHOT/api/v1/sensors \
 -H "Content-Type: application/json" \
--d "{\"id\":1,\"type\":\"Temperature\",\"value\":25,\"roomId\":1}"
+-d "{\"id\":\"HUM-001\",\"type\":\"Humidity\",\"value\":55.0,\"roomId\":\"CS-205\",\"status\":\"ACTIVE\"}"
 ```
 
-### 6. Get Sensors (Filtered by Type)
+### 6. Filter Sensors by Type
 
 ```
-curl "http://localhost:8080/api/v1/sensors?type=CO2"
+curl http://localhost:8080/SmartCampusAPI-1.0-SNAPSHOT/api/v1/sensors?type=CO2
 ```
 
 ### 7. Add Sensor Reading
 
 ```
-curl -X POST http://localhost:8080/api/v1/sensors/1/readings \
+curl -X POST http://localhost:8080/SmartCampusAPI-1.0-SNAPSHOT/api/v1/sensors/HUM-001/readings \
 -H "Content-Type: application/json" \
--d "{\"id\":1,\"value\":30.5,\"timestamp\":\"2026-04-14T10:00:00\"}"
+-d "{\"value\":24.7}"
 ```
 
-### 1. Get Sensor REading
+### 1. Get Sensor Reading
 
 ```
-curl http://localhost:8080/api/v1/sensors/readings
+curl http://localhost:8080/SmartCampusAPI-1.0-SNAPSHOT/api/v1/sensors/HUM-001/readings
 ```
+---
 
+## Error Handling 
+
+The API implements custom exception handling suing Exception Mappers.
+
+### 422 Unprocessable Entity
+* Returned when a sensor reference a non-existent room
+
+### 403 Forbidden
+* Returned when adding readings to a sensor in MAINTENANCE state.
+
+### 409 Conflict
+* Returned when attempting to delete a room that still contains sensors
+
+### 500 Internal Server Error
+* Returned for unexpected system errors 
 ---
 
 ## Notes
 
-* The API uses in-memory storage (no database)
-* Data will reset when the server restarts
-* Designed following RESTful best practices
+* Built using JAX-RS (Jersey)
+* Deployed on Apache Tomcat
+* Follows RESTful design principles
