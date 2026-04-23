@@ -4,28 +4,29 @@
  */
 package com.api.model;
 
+
 /**
  *
  * @author Senesa
  */
 public class SensorReading {
     
-    private int id;
+    private String id;
     private double value;
-    private String timestamp;
+    private long timestamp;
     
     public SensorReading(){}
     
-    public SensorReading(int id, double value, String timestamp){
+    public SensorReading(String id, double value, long timestamp){
         this.id = id;
         this.value = value;
         this.timestamp = timestamp;
     }
     
-    public int getId(){
+    public String getId(){
         return id;
     }
-    public void setId(int id){
+    public void setId(String id){
         this.id = id;
     }
     
@@ -36,10 +37,10 @@ public class SensorReading {
         this.value = value;
     }
     
-    public String getTimestamp(){
+    public long getTimestamp(){
         return timestamp;
     }
-    public void setTimeStamp(String timestamp){
+    public void setTimeStamp(long timestamp){
         this.timestamp = timestamp;
     }
 }

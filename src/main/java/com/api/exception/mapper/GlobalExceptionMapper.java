@@ -7,6 +7,7 @@ package com.api.exception.mapper;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
+import javax.ws.rs.core.MediaType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,9 +23,11 @@ public class GlobalExceptionMapper implements ExceptionMapper<Throwable>{
     public Response toResponse (Throwable ex){
         Map<String, String> error = new HashMap<>();
         error.put("error", "Internal Server Error");
+        error.put("message", ex.getMessage() != null ? ex.getMessage():"An unexpected error occured");
         
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR) 
                 .entity(error)
+                .type(MediaType.APPLICATION_JSON)
                 .build();
     }
 }

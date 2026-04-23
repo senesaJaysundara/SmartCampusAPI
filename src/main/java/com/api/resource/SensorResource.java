@@ -16,6 +16,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.PathParam;
@@ -27,11 +28,12 @@ import java.util.Collection;
  */
 
 @Path("/sensors")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class SensorResource {
     
     //GET with filtering
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
     public Collection<Sensor>getSensors(@QueryParam("type") String type){
         
         Collection <Sensor> sensors = SensorService.getAllSensors();
@@ -48,33 +50,42 @@ public class SensorResource {
     //GET by ID
     @GET
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Sensor getSensor(@PathParam("id") int id){
-        return SensorService.getSensor(id);
+//    @Produces(MediaType.APPLICATION_JSON)
+    public Response getSensor(@PathParam("id") String id){
+        Sensor sensor = SensorService.getSensor(id);
+        if(sensor == null){
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("{\"error\":\"Sensor not found\"}")
+                    .build();
+        }
+        return Response.ok(sensor).build();
     }
+    
+    //Sub-resource locator for readings
     @Path("/{id}/readings")
-    public SensorReadingResource getReadingResource(@PathParam("id")int id){
+    public SensorReadingResource getReadingResource(@PathParam("id")String id){
         return new SensorReadingResource(id);
     }
     
-    //POST with validation
+    //POST create sensor with room validation
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Sensor addSensor(Sensor sensor){
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    @Produces(MediaType.APPLICATION_JSON)
+    public Response addSensor(Sensor sensor){
         //room validation
         if(RoomService.getRoom(sensor.getRoomId()) == null){
-            throw new LinkedResourceNotFoundException("Room does not exist.");
+            throw new LinkedResourceNotFoundException("Room with ID" + sensor.getRoomId()+"does not exist.");
         }
-        return SensorService.addSensor(sensor);
+        Sensor created = SensorService.addSensor(sensor);
+        return Response.status(Response.Status.CREATED).entity(created).build();
     }
     
     //PUT
     @PUT
     @Path("/{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Sensor updateSensor(@PathParam("id") int id, Sensor sensor){
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    @Produces(MediaType.APPLICATION_JSON)
+    public Sensor updateSensor(@PathParam("id") String id, Sensor sensor){
         sensor.setId(id);
         return SensorService.updateSensor(id, sensor);
     }
@@ -83,7 +94,13 @@ public class SensorResource {
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Sensor deleteSensor(@PathParam("id") int id){
-        return SensorService.deleteSensor(id);
+    public Response deleteSensor(@PathParam("id") String id){
+        Sensor deleted = SensorService.deleteSensor(id);
+        if(deleted == null){
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("{\"error\":\"Sensor not found\"}")
+                    .build();
+        }
+        return Response.ok(deleted).build();
     }
 }

@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.List;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  *
@@ -18,17 +19,23 @@ import java.util.ArrayList;
 public class SensorReadingService {
     
     //sensorId -> list of readings
-    private static Map<Integer, List<SensorReading>> readings = new HashMap<>();
+    private static Map<String, List<SensorReading>> readings = new HashMap<>();
     
-    public static List<SensorReading> getReadings(int sensorId){
+    public static List<SensorReading> getReadings(String sensorId){
         return readings.getOrDefault(sensorId, new ArrayList<>());
     }
     
-    public static SensorReading addReading(int sensorId, SensorReading reading){
+    public static SensorReading addReading(String sensorId, SensorReading reading){
         
+        //Auto-generate ID and timestamp 
+        if(reading.getId() == null || reading.getId().isEmpty()){
+            reading.setId(UUID.randomUUID().toString());
+        }
+        if(reading.getTimestamp() == 0){
+            reading.setTimeStamp(System.currentTimeMillis());
+        }
         readings.putIfAbsent(sensorId, new ArrayList<>());
         readings.get(sensorId).add(reading);
-        
         return reading;
     }
 }

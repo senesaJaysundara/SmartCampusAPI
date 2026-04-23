@@ -10,15 +10,15 @@ package com.api.model;
  */
 public class Sensor {
     
-    private int id;
+    private String id;
     private String type;
     private double value;
-    private int roomId;
+    private String roomId;
     private String status;
     
     public Sensor(){}
     
-    public Sensor(int id, String type, double value, int roomId, String status){
+    public Sensor(String id, String type, double value, String roomId, String status){
         this.id = id;
         this.type = type;
         this.value = value;
@@ -26,10 +26,10 @@ public class Sensor {
         this.status = status;
     }
     
-    public int getId(){
+    public String getId(){
         return id;
     }
-    public void setId(int id){
+    public void setId(String id){
         this.id = id;
     }
     
@@ -47,10 +47,10 @@ public class Sensor {
         this.value = value;
     }
     
-    public int getRoomId(){
+    public String getRoomId(){
         return roomId;
     }
-    public void setRoomId(int roomId){
+    public void setRoomId(String roomId){
         this.roomId = roomId;
     }
     

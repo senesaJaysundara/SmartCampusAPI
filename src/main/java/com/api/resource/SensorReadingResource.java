@@ -15,17 +15,19 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 /**
  *
  * @author Senesa
  */
+
 public class SensorReadingResource {
     
-    private int sensorId;
+    private String sensorId;
     
-    public SensorReadingResource(int sensorId){
+    public SensorReadingResource(String sensorId){
         this.sensorId = sensorId;
     }
     
@@ -40,23 +42,32 @@ public class SensorReadingResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public SensorReading addReading(SensorReading reading){
+    public Response addReading(SensorReading reading){
         //Add reading
         //SensorReadingService.addReading(sensorId, reading);
-        
         Sensor sensor = SensorService.getSensor(sensorId);
         
-        if(sensor.getStatus().equals("MAINTENANCE")){
-            throw new SensorUnavailableException("Sensor id under maintenance.");
+        if (sensor == null){
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("{\"error\":\"Sensor not found\"}")
+                    .type(MediaType.APPLICATION_JSON)
+                    .build();
+        }
+        
+        //Block readings for sensors under maintenance
+        if("MAINTENANCE".equals(sensor.getStatus())){
+            throw new SensorUnavailableException("Sensor " + sensorId + "is under maintenance and cannot accept readings");
         }
         
         //Save reading
-        SensorReadingService.addReading(sensorId, reading);
+        SensorReading saved = SensorReadingService.addReading(sensorId, reading);
         
-        //update parent sensor value
-        if (sensor != null){
-            sensor.setValue(reading.getValue());
-        }
-        return reading;
+        //update parent sensor's current value
+        sensor.setValue(saved.getValue());
+        
+        return Response.status(Response.Status.CREATED)
+                .entity(saved)
+                .build();
+        
     }
 }

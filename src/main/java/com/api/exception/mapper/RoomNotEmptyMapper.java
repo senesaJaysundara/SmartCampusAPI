@@ -6,6 +6,7 @@ package com.api.exception.mapper;
 
 import com.api.exception.RoomNotEmptyException;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
@@ -23,10 +24,12 @@ public class RoomNotEmptyMapper implements ExceptionMapper<RoomNotEmptyException
     @Override
     public Response toResponse(RoomNotEmptyException ex){
         Map<String, String> error = new HashMap<>();
-        error.put("error", ex.getMessage());
+        error.put("error", "Conflict");
+        error.put("message", ex.getMessage());
         
         return Response.status(Response.Status.CONFLICT) // 409
                 .entity(error)
+                .type(MediaType.APPLICATION_JSON)
                 .build();
     }
 }

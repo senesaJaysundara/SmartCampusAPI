@@ -5,7 +5,9 @@
 package com.api.resource;
 
 import com.api.model.Room;
+import com.api.model.Sensor;
 import com.api.service.RoomService;
+import com.api.service.SensorService;
 import com.api.exception.RoomNotEmptyException;
 
 import javax.ws.rs.Path;
@@ -16,6 +18,7 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.Collection;
 import javax.ws.rs.PathParam;
 
@@ -25,11 +28,14 @@ import javax.ws.rs.PathParam;
  */
 
 @Path("/rooms")
+//@Produces("application/json")
+//@Consumes("application/json")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class RoomResource {
     
     //Get all rooms
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
     public Collection<Room> getRooms(){
         return RoomService.getAllRooms();
     }
@@ -37,52 +43,65 @@ public class RoomResource {
     //GET room by ID
     @GET
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Room getRoom(@PathParam("id") int id){
-        return RoomService.getRoom(id);
+//    @Produces(MediaType.APPLICATION_JSON)
+    public Response getRoom(@PathParam("id") String id){
+        Room room = RoomService.getRoom(id);
+        if(room == null){
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("{\"error\":\"Room not found\"}")
+                    .build();
+        }
+        return Response.ok(room).build();
     }
     
     //GET sensors belongs to a specific room
     @GET
     @Path("/{id}/sensors")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Collection<com.api.model.Sensor> getSensorByRoom(@PathParam("id")int id){
+//    @Produces(MediaType.APPLICATION_JSON)
+    public Collection<Sensor> getSensorByRoom(@PathParam("id")String id){
         
-        return com.api.service.SensorService.getAllSensors()
+        return SensorService.getAllSensors()
                 .stream()
-                .filter(sensor -> sensor.getRoomId() == id)
+                .filter(sensor -> id.equals(sensor.getRoomId()))
                 .toList();
     }
     
     //POST create room
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Room addRoom(Room room){
-        return RoomService.addRoom(room);
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    @Produces(MediaType.APPLICATION_JSON)
+    public Response addRoom(Room room){
+        Room created = RoomService.addRoom(room);
+        return Response.status(Response.Status.CREATED).entity(created).build();
     }
     
     //PUT Update rooms
     @PUT
     @Path("/{id}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Room updateRoom(@PathParam("id") int id, Room room){
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    @Produces(MediaType.APPLICATION_JSON)
+    public Room updateRoom(@PathParam("id") String id, Room room){
         return RoomService.updateRoom(id, room);
     }
     
     //DELETE Room
     @DELETE
     @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Room deleteRoom(@PathParam("id") int id){
+//    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteRoom(@PathParam("id") String id){
         
-        boolean hasSensor = com.api.service.SensorService.getAllSensors()
+        boolean hasSensor = SensorService.getAllSensors()
                 .stream()
-                .anyMatch(sensor -> sensor.getRoomId() == id);
+                .anyMatch(sensor -> id.equals(sensor.getRoomId()));
         if (hasSensor){
             throw new RoomNotEmptyException("Room cannot be deleted, sensors are still assigned.");
         }
-        return RoomService.deleteRoom(id);
+        Room deleted = RoomService.deleteRoom(id);
+        if(deleted == null){
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("{\"error\":\"Room not found\"}")
+                    .build();
+        }
+        return Response.ok(deleted).build();
     }
 }

@@ -15,30 +15,30 @@ import java.util.Collection;
  */
 public class RoomService {
     
-    private static Map<Integer, Room> rooms = new HashMap<>();
+    private static Map<String, Room> rooms = new HashMap<>();
     
     static{
-        rooms.put(1, new Room(1, "Lecture Hall", 100));
-        rooms.put(2, new Room(2, "Computer Lab", 50));
+        rooms.put("LIB-301", new Room("LIB-301", "Library", 50));
+        rooms.put("LAB-101", new Room("LAB-101", "Computer Lab", 30));
     }
     
     public static Collection<Room> getAllRooms(){
         return rooms.values();
     }
     
-    public static Room getRoom(int id){
+    public static Room getRoom(String id){
         return rooms.get(id);
     }
     public static Room addRoom(Room room){
         rooms.put(room.getId(), room);
         return room;
     }
-    public static Room updateRoom(int id, Room room){
+    public static Room updateRoom(String id, Room room){
         room.setId(id);
         rooms.put(id, room);
         return room;
     }
-    public static Room deleteRoom(int id){
+    public static Room deleteRoom(String id){
         return rooms.remove(id);
     }
 }

@@ -15,18 +15,18 @@ import java.util.Collection;
  */
 public class SensorService {
     
-    private static Map<Integer, Sensor> sensors = new HashMap<>();
+    private static Map<String, Sensor> sensors = new HashMap<>();
     
     static{
-        sensors.put(1, new Sensor(1, "Temperature", 2.5, 1, "ACTIVE"));
-        sensors.put(2, new Sensor(2, "CO2", 400, 1, "ACTIVE"));
+        sensors.put("TEMP-001", new Sensor("TEMP-001", "Temperature", 2.5, "LIB-301", "ACTIVE"));
+        sensors.put("CO2-001", new Sensor("CO2-001", "CO2", 400.0, "LIB-301", "ACTIVE"));
     }
     
     public static Collection<Sensor> getAllSensors(){
         return sensors.values();
     }
     
-    public static Sensor getSensor(int id){
+    public static Sensor getSensor(String id){
         return sensors.get(id);
     }
     
@@ -35,13 +35,13 @@ public class SensorService {
         return sensor;
     }
     
-    public static Sensor updateSensor(int id, Sensor sensor){
+    public static Sensor updateSensor(String id, Sensor sensor){
         sensor.setId(id);
         sensors.put(id, sensor);
         return sensor;
     }
     
-    public static Sensor deleteSensor(int id){
+    public static Sensor deleteSensor(String id){
         return sensors.remove(id);
     }
 }
