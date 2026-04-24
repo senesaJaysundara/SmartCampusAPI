@@ -16,7 +16,7 @@ import java.util.HashMap;
  * @author Senesa
  */
 
-@Path("/discovery")
+@Path("/")
 public class DiscoveryResource {
     
     @GET

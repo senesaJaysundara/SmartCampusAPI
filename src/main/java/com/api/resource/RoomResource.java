@@ -72,7 +72,10 @@ public class RoomResource {
 //    @Produces(MediaType.APPLICATION_JSON)
     public Response addRoom(Room room){
         Room created = RoomService.addRoom(room);
-        return Response.status(Response.Status.CREATED).entity(created).build();
+        return Response.status(Response.Status.CREATED)
+                .entity(created)
+                .header("Location","/api/v1/rooms"+created.getId())
+                .build();
     }
     
     //PUT Update rooms

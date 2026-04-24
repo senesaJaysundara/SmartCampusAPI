@@ -12,16 +12,16 @@ public class Sensor {
     
     private String id;
     private String type;
-    private double value;
+    private double currentValue;
     private String roomId;
     private String status;
     
     public Sensor(){}
     
-    public Sensor(String id, String type, double value, String roomId, String status){
+    public Sensor(String id, String type, double currentValue, String roomId, String status){
         this.id = id;
         this.type = type;
-        this.value = value;
+        this.currentValue = currentValue;
         this.roomId = roomId;
         this.status = status;
     }
@@ -40,11 +40,11 @@ public class Sensor {
         this.type = type;
     }
     
-    public double getValue(){
-        return value;
+    public double getCurrentValue(){
+        return currentValue;
     }
-    public void setValue(double value){
-        this.value = value;
+    public void setValue(double currentValue){
+        this.currentValue = currentValue;
     }
     
     public String getRoomId(){
